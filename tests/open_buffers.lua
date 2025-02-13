@@ -1,3 +1,5 @@
+require("winbuffers").setup()
+
 vim.cmd("colorscheme habamax")
 vim.cmd("edit scripts/minimal_init.lua")
 vim.cmd("vsplit")
