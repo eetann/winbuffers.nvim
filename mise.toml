@@ -9,3 +9,9 @@ run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c 'luafile ./sc
 
 [tasks.launch]
 run = "nvim --noplugin -u ./tests/minimal_init.lua -c 'luafile ./tests/open_buffers.lua'"
+
+[tasks.launch-tmux]
+run = "tmux popup -E -w 95% -h 95% -d '#{pane_current_path}' 'mise run launch'"
+
+[env]
+COMMIT_MESSAGE_ENGLISH = 1
