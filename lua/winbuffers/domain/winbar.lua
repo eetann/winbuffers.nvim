@@ -4,13 +4,13 @@
 local Winbar = {}
 Winbar.__index = Winbar
 
----create winbar
 ---@param winid integer
 ---@return Winbuffers.Winbar
 function Winbar:new(winid)
 	return setmetatable({ winid = winid, buffers = {} }, Winbar)
 end
 
+-- TODO: これは他のWinbarも考慮しなきゃなのでdomainサービスへ
 ---create text for winbar
 ---@return string
 function Winbar:create_text()

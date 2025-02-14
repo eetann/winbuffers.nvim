@@ -1,11 +1,11 @@
 require("winbuffers").setup()
 
 vim.cmd("colorscheme habamax")
-vim.cmd("edit scripts/minimal_init.lua")
+vim.cmd("edit scripts/doc/minimal_init.lua")
 vim.cmd("vsplit")
 vim.cmd("edit lua/winbuffers/init.lua")
 vim.cmd("split")
-vim.cmd("edit tests/minimal_init.lua")
+vim.cmd("edit scripts/test/minimal_init.lua")
 
 vim.keymap.set("n", "s", "<NOP>")
 
