@@ -1,4 +1,4 @@
-local Winbar = require("winbuffers.domain.winbar")
+local WinbarManager = require("winbuffers.domain.winbar_manager")
 
 ---@class autocmd_callback_args
 ---@field id number
@@ -11,8 +11,7 @@ local Winbar = require("winbuffers.domain.winbar")
 
 local M = {}
 
----@type {[integer]: Winbuffers.Winbar}
-local winbar_table = {}
+local manager = WinbarManager:new()
 
 local augroup = "winbuffers"
 vim.api.nvim_create_augroup(augroup, {})
@@ -21,15 +20,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	group = augroup,
 	---@param args autocmd_callback_args
 	callback = function(args)
-		local winid = vim.api.nvim_get_current_win()
-		local winbar = winbar_table[winid]
-		local buf = args.buf
-		if winbar then
-		else
-			winbar = Winbar:new(winid)
-			winbar_table[winid] = winbar
-		end
-		winbar:add_buffer(buf)
+		manager:attach_buffer(args.buf)
 	end,
 })
 
