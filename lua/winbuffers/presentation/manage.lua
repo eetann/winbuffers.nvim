@@ -17,7 +17,6 @@ local winbar_table = {}
 local augroup = "winbuffers"
 vim.api.nvim_create_augroup(augroup, {})
 
--- 画面分割は、分割後にカーソルの残らないウィンドウが新しいやつ
 vim.api.nvim_create_autocmd({ "VimEnter", "WinNew", "BufWinEnter" }, {
 	group = augroup,
 	---@param args autocmd_callback_args
