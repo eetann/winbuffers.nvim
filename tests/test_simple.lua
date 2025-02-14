@@ -13,17 +13,14 @@ local T = MiniTest.new_set({
 })
 
 T["works"] = function()
-	eq(1, #vim.fn.getbufinfo())
 	-- | 1 |
 	child.cmd("edit src/foo.lua")
-	-- expect.winbar_current_matching(child, "foo.lua | ")
+	expect.winbar_current_matching(child, "foo.lua | ")
 
 	-- | 2 | 1 |
 	-- 2
-	child.cmd("vsplit")
-	vim.uv.sleep(1000)
-	child.cmd("edit src/bar.lua")
-	expect.winbar_current_matching(child, "foo.lua | bar.lua | ")
+	child.cmd("vsplit src/bar.lua")
+	expect.winbar_current_matching(child, "bar.lua | ")
 	-- 1
 	child.cmd("wincmd l") -- jump right
 	expect.winbar_current_matching(child, "foo.lua | ")
@@ -33,13 +30,11 @@ T["works"] = function()
 	-- | 3 |   |
 	-- |---| 1 |
 	-- | 2 |   |
-	child.cmd("split") -- 3
-	vim.uv.sleep(1000)
+	-- 3
+	child.cmd("split foo/buz/buz.lua")
+	expect.winbar_current_matching(child, "buz.lua | ")
+	child.cmd("wincmd j") -- 2
 	expect.winbar_current_matching(child, "bar.lua | ")
-	child.cmd("edit foo/buz/buz.lua")
-	expect.winbar_current_matching(child, "bar.lua | buz.lua | ")
-	child.cmd("wincmd j") -- 1
-	expect.winbar_current_matching(child, "foo.lua | bar.lua | ")
 end
 
 return T

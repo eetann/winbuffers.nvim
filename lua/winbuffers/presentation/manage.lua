@@ -17,7 +17,7 @@ local winbar_table = {}
 local augroup = "winbuffers"
 vim.api.nvim_create_augroup(augroup, {})
 
-vim.api.nvim_create_autocmd({ "VimEnter", "WinNew", "BufWinEnter" }, {
+vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	group = augroup,
 	---@param args autocmd_callback_args
 	callback = function(args)
