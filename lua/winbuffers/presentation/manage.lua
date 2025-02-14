@@ -17,6 +17,7 @@ local winbar_table = {}
 local augroup = "winbuffers"
 vim.api.nvim_create_augroup(augroup, {})
 
+-- 画面分割は、分割後にカーソルの残らないウィンドウが新しいやつ
 vim.api.nvim_create_autocmd({ "VimEnter", "WinNew", "BufWinEnter" }, {
 	group = augroup,
 	---@param args autocmd_callback_args
@@ -25,14 +26,11 @@ vim.api.nvim_create_autocmd({ "VimEnter", "WinNew", "BufWinEnter" }, {
 		local winbar = winbar_table[winid]
 		local buf = args.buf
 		if winbar then
-			vim.print("exist winbar " .. winid)
-			winbar:add_buffer(buf)
 		else
-			vim.print("create winbar " .. winid)
 			winbar = Winbar:new(winid)
 			winbar_table[winid] = winbar
-			winbar:add_buffer(buf)
 		end
+		winbar:add_buffer(buf)
 	end,
 })
 

@@ -1,6 +1,6 @@
 ---@class Winbuffers.Winbar
 ---@field winid integer
----@field buffers integer[]
+---@field buffers { [string]: integer }
 local Winbar = {}
 Winbar.__index = Winbar
 
@@ -15,9 +15,9 @@ end
 ---@return string
 function Winbar:create_text()
 	local text = ""
-	for _, bufnr in ipairs(self.buffers) do
+	for _, bufnr in pairs(self.buffers) do
 		local buf = vim.fn.getbufinfo(bufnr)[1]
-		text = text .. vim.fn.fnamemodify(buf.name, ":p") .. " "
+		text = text .. vim.fn.fnamemodify(buf.name, ":t") .. " | "
 	end
 	return text
 end
@@ -28,21 +28,20 @@ end
 
 ---@param bufnr integer|nil
 function Winbar:add_buffer(bufnr)
-	if bufnr == nil then
+	if bufnr == nil or self.buffers[tostring(bufnr)] ~= nil then
 		do
 			return
 		end
 	end
-	-- TODO: 重複を避けたいので、buffersは連想配列にする
-	table.insert(self.buffers, bufnr)
+	self.buffers[tostring(bufnr)] = bufnr
 	self:set_winbar()
 end
 
 ---@param delete_bufnr integer
 function Winbar:delete_buffer(delete_bufnr)
-	for i, bufnr in ipairs(self.buffers) do
+	for key, bufnr in pairs(self.buffers) do
 		if bufnr == delete_bufnr then
-			table.remove(self.buffers, i)
+			self.buffers[key] = nil
 		end
 	end
 	self:set_winbar()
