@@ -23,21 +23,9 @@ function Winbar:get_sorted_keys()
 	return sorted_keys
 end
 
--- TODO: これは他のWinbarも考慮しなきゃなのでdomainサービスへ
----create text for winbar
----@return string
-function Winbar:create_text()
-	local text = ""
-	for _, key in ipairs(self:get_sorted_keys()) do
-		-- text = text .. key
-		local bufinfo = vim.fn.getbufinfo(self.buffers[key].bufnr)[1]
-		text = text .. vim.fn.fnamemodify(bufinfo.name, ":t") .. " | "
-	end
-	return text
-end
-
-function Winbar:set_winbar()
-	vim.wo[self.winid].winbar = self:create_text()
+---@param text string
+function Winbar:set_winbar(text)
+	vim.wo[self.winid].winbar = text
 end
 
 ---@param bufnr integer|nil
@@ -48,7 +36,6 @@ function Winbar:add_buffer(bufnr)
 		end
 	end
 	self.buffers[tostring(bufnr)] = { bufnr = bufnr, added = os.time() }
-	self:set_winbar()
 end
 
 ---@param delete_bufnr integer
@@ -58,7 +45,6 @@ function Winbar:delete_buffer(delete_bufnr)
 			self.buffers[key] = nil
 		end
 	end
-	self:set_winbar()
 end
 
 return Winbar
