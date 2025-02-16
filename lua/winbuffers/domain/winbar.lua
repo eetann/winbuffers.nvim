@@ -10,7 +10,7 @@ function Winbar:new(winid)
 	return setmetatable({ winid = winid, buffers = {} }, Winbar)
 end
 
-function Winbar:get_sorted_keys()
+function Winbar:get_sorted_bufnrs()
 	local sorted_keys = {}
 	local i = 1
 	for k, _ in pairs(self.buffers) do
