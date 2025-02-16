@@ -3,10 +3,10 @@ local Winbar = require("winbuffers.domain.winbar")
 local sep = vim.fn.has("win32") == 1 and "\\" or "/"
 
 ---@alias filename string
----@alias fullpath string
----@alias bufnr string
----@alias fullpath_dict { [bufnr]: fullpath, buffer_name: string }
----@alias unique_buffer_names { [filename]: fullpath_dict }
+---@alias path_segment string[]
+---@alias bufnr integer
+---@alias buffer_name_map { path_segment: path_segment, buffer_name: string }
+---@alias unique_buffer_names { [filename]: { [bufnr]: buffer_name_map } }
 
 ---@class Winbuffers.WinbarManager
 ---@field winbar_table { [integer]: Winbuffers.Winbar }
@@ -26,8 +26,7 @@ function WinbarManager:get_unique_name(bufnr)
 	if #bufnr_list[filename] == 1 then
 		return filename
 	end
-	-- TODO: ユニークにして返す
-	return filename
+	return bufnr_list[bufinfo.bufnr].buffer_name
 end
 
 ---create text to display winbar
@@ -47,16 +46,60 @@ function WinbarManager:update(winbar)
 	winbar:set_winbar(text)
 end
 
+---get path with depth specified
+---@param path_segment path_segment
+---@param depth integer
+---@return string
+function WinbarManager:get_depth_path(path_segment, depth)
+	local length = #path_segment
+	local start = length - depth -- 0 based index because vim function
+	if start < 0 then
+		start = 0
+	end
+	return table.concat(vim.fn.slice(path_segment, start, length), sep)
+end
+
+--- make paths unique
+---@param buffer_name_maps { [bufnr]: buffer_name_map }
+function WinbarManager:make_path_unique(buffer_name_maps)
+	local is_all_same_segument = false
+	local depth = 1
+	while not is_all_same_segument do
+		is_all_same_segument = true
+		depth = depth + 1
+		---@type true|string|nil
+		local first_segment = true
+		for _, buffer_name_map in pairs(buffer_name_maps) do
+			local start = #buffer_name_map.path_segment - (depth - 1)
+			local segment = buffer_name_map.path_segment[start]
+			if first_segment == true then
+				first_segment = segment
+			elseif first_segment ~= segment then
+				is_all_same_segument = false
+				break
+			end
+		end
+	end
+	depth = depth - 1
+	for bufnr, buffer_name_map in pairs(buffer_name_maps) do
+		buffer_name_maps[bufnr]["buffer_name"] = self:get_depth_path(buffer_name_map.path_segment, depth)
+	end
+end
+
 ---@param bufnr integer
 function WinbarManager:add_to_unique_list(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
-	local bufnr_list = self.unique_buffer_names[filename]
-	if bufnr_list == nil then
+	local buffer_name_maps = self.unique_buffer_names[filename]
+	if buffer_name_maps == nil then
 		self.unique_buffer_names[filename] = {}
+		self.unique_buffer_names[filename][bufnr] = {
+			path_segment = vim.split(bufinfo.name, sep),
+		}
+	else
+		self.unique_buffer_names[filename][bufnr] = vim.fn.reverse(vim.split(bufinfo.name, sep))
+		self:make_path_unique(self.unique_buffer_names[filename])
 	end
-	self.unique_buffer_names[filename][bufnr] = bufinfo.name
-	-- TODO: ここで重複ケースの場合にファイル名を書いておく
 end
 
 -- 情報を集める
