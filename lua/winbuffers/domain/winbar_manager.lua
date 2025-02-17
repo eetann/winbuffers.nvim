@@ -39,10 +39,11 @@ function WinbarManager:create_text(winbar)
 	return text
 end
 
----@param winbar Winbuffers.Winbar
-function WinbarManager:update(winbar)
-	local text = self:create_text(winbar)
-	winbar:set_winbar(text)
+function WinbarManager:update()
+	for _, winbar in pairs(self.winbar_table) do
+		local text = self:create_text(winbar)
+		winbar:set_winbar(text)
+	end
 end
 
 ---get path with depth specified
@@ -116,7 +117,7 @@ function WinbarManager:attach_buffer(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	self:add_to_unique_list(bufnr, bufinfo.name)
 
-	self:update(winbar)
+	self:update()
 end
 
 return WinbarManager

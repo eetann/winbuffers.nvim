@@ -68,4 +68,19 @@ T["works"] = function()
 	expect.winbar_current_matching(child, "bar.lua | ")
 end
 
+T["works 2"] = function()
+	-- | 1 |
+	child.cmd("edit src/foo/bar.lua")
+	expect.winbar_current_matching(child, "bar.lua | ")
+
+	-- | 2 | 1 |
+	-- 2
+	child.cmd("vsplit")
+	child.cmd("edit src/foo2/bar.lua")
+	expect.winbar_current_matching(child, "foo2/bar.lua | ")
+	-- 1
+	child.cmd("wincmd l") -- jump right
+	expect.winbar_current_matching(child, "foo/bar.lua | ")
+end
+
 return T
