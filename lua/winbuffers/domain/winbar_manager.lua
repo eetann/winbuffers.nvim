@@ -23,13 +23,8 @@ end
 function WinbarManager:get_unique_name(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
-	-- TODO: ここになぜかnilが入っている
 	local bufnr_list = self.unique_buffer_names[filename]
-	return vim.fn.json_encode(vim.fn.len(bufnr_list))
-	-- if #bufnr_list == 1 then
-	-- 	return filename
-	-- end
-	-- return bufnr_list[bufinfo.bufnr].buffer_name
+	return bufnr_list[bufinfo.bufnr].buffer_name
 end
 
 ---create text to display winbar
@@ -91,18 +86,19 @@ function WinbarManager:make_path_unique(buffer_name_maps)
 end
 
 ---@param bufnr integer
-function WinbarManager:add_to_unique_list(bufnr)
-	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
-	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
+---@param fullpath string
+function WinbarManager:add_to_unique_list(bufnr, fullpath)
+	local filename = vim.fn.fnamemodify(fullpath, ":t")
 	local buffer_name_maps = self.unique_buffer_names[filename]
 	if buffer_name_maps == nil then
 		self.unique_buffer_names[filename] = {
 			[bufnr] = {
-				path_segment = vim.split(bufinfo.name, sep),
+				path_segment = vim.split(fullpath, sep),
+				buffer_name = filename,
 			},
 		}
 	else
-		self.unique_buffer_names[filename][bufnr] = { path_segment = vim.split(bufinfo.name, sep) }
+		self.unique_buffer_names[filename][bufnr] = { path_segment = vim.split(fullpath, sep), buffer_name = "" }
 		self:make_path_unique(self.unique_buffer_names[filename])
 	end
 end
@@ -117,7 +113,8 @@ function WinbarManager:attach_buffer(bufnr)
 		self.winbar_table[winid] = winbar
 	end
 	winbar:add_buffer(bufnr)
-	self:add_to_unique_list(bufnr)
+	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
+	self:add_to_unique_list(bufnr, bufinfo.name)
 
 	self:update(winbar)
 end
