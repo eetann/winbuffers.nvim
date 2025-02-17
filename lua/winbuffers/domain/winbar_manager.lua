@@ -19,14 +19,17 @@ function WinbarManager:new()
 end
 
 ---@param bufnr integer
+---@return string
 function WinbarManager:get_unique_name(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
+	-- TODO: ここになぜかnilが入っている
 	local bufnr_list = self.unique_buffer_names[filename]
-	if #bufnr_list[filename] == 1 then
-		return filename
-	end
-	return bufnr_list[bufinfo.bufnr].buffer_name
+	return vim.fn.json_encode(vim.fn.len(bufnr_list))
+	-- if #bufnr_list == 1 then
+	-- 	return filename
+	-- end
+	-- return bufnr_list[bufinfo.bufnr].buffer_name
 end
 
 ---create text to display winbar
@@ -35,7 +38,8 @@ function WinbarManager:create_text(winbar)
 	local text = ""
 	local sorted_bufnrs = winbar:get_sorted_bufnrs()
 	for _, key in ipairs(sorted_bufnrs) do
-		text = text .. self:get_unique_name(winbar.buffers[key].bufnr) .. " | "
+		local result = self:get_unique_name(winbar.buffers[key].bufnr)
+		text = text .. result .. " | "
 	end
 	return text
 end
@@ -92,18 +96,16 @@ function WinbarManager:add_to_unique_list(bufnr)
 	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
 	local buffer_name_maps = self.unique_buffer_names[filename]
 	if buffer_name_maps == nil then
-		self.unique_buffer_names[filename] = {}
-		self.unique_buffer_names[filename][bufnr] = {
-			path_segment = vim.split(bufinfo.name, sep),
+		self.unique_buffer_names[filename] = {
+			[bufnr] = {
+				path_segment = vim.split(bufinfo.name, sep),
+			},
 		}
 	else
-		self.unique_buffer_names[filename][bufnr] = vim.fn.reverse(vim.split(bufinfo.name, sep))
+		self.unique_buffer_names[filename][bufnr] = { path_segment = vim.split(bufinfo.name, sep) }
 		self:make_path_unique(self.unique_buffer_names[filename])
 	end
 end
-
--- 情報を集める
--- 重複があればパスを書き換える
 
 ---attach buffer
 ---@param bufnr integer
