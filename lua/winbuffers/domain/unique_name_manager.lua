@@ -2,8 +2,8 @@ local utils = require("winbuffers.domain.utils")
 
 ---@alias path_segment string[]
 ---@alias display_name_fields { path_segment: path_segment, display_name: string }
----@alias display_name_records { [bufnr]: display_name_fields }
----@alias display_name_records_dict { [filename]: display_name_records }
+---@alias display_name_records table<bufnr, display_name_fields>
+---@alias display_name_records_dict table<filename, display_name_records>
 
 ---@class UniqueNameManager
 ---@field records_dict display_name_records_dict
@@ -27,7 +27,7 @@ function UniqueNameManager:get_depth_path(path_segment, depth)
 end
 
 ---make 'display name' unique
----@param records any
+---@param records table<bufnr, display_name_fields>
 function UniqueNameManager:make_path_unique(records)
 	if vim.fn.len(vim.fn.filter(records, "v:val isnot v:null")) == 1 then
 		for _, fields in pairs(records) do
