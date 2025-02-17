@@ -12,7 +12,7 @@ local T = MiniTest.new_set({
 	},
 })
 
-T["works"] = function()
+T["works with split command"] = function()
 	-- | 1 |
 	child.cmd("edit src/foo.lua")
 	expect.winbar_current_matching(child, "foo.lua | ")
@@ -37,7 +37,7 @@ T["works"] = function()
 	expect.winbar_current_matching(child, "bar.lua | ")
 end
 
-T["works 2"] = function()
+T["works without split command"] = function()
 	-- | 1 |
 	child.cmd("edit src/foo/bar.lua")
 	expect.winbar_current_matching(child, "bar.lua | ")
@@ -50,6 +50,17 @@ T["works 2"] = function()
 	-- 1
 	child.cmd("wincmd l") -- jump right
 	expect.winbar_current_matching(child, "foo/bar.lua | ")
+end
+
+T["delete buffer"] = function()
+	-- | 1 |
+	child.cmd("edit src/foo/bar.lua")
+
+	-- | 2 | 1 |
+	-- 2
+	child.cmd("vsplit src/foo2/bar.lua")
+	child.cmd("bd")
+	expect.winbar_current_matching(child, "bar.lua | ")
 end
 
 return T

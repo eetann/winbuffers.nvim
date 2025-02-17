@@ -24,4 +24,12 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	end,
 })
 
+vim.api.nvim_create_autocmd({ "BufDelete" }, {
+	group = augroup,
+	---@param args autocmd_callback_args
+	callback = function(args)
+		manager:detach_buffer(args.buf)
+	end,
+})
+
 return M

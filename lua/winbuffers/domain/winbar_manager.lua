@@ -24,6 +24,9 @@ function WinbarManager:get_unique_name(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
 	local bufnr_list = self.unique_buffer_names[filename]
+	if bufnr_list[bufinfo.bufnr] == nil then
+		return ""
+	end
 	return bufnr_list[bufinfo.bufnr].buffer_name
 end
 
@@ -62,6 +65,12 @@ end
 --- make paths unique
 ---@param buffer_name_maps { [bufnr]: buffer_name_map }
 function WinbarManager:make_path_unique(buffer_name_maps)
+	if vim.fn.len(vim.fn.filter(buffer_name_maps, "v:val isnot v:null")) == 1 then
+		for _, buffer_name_map in pairs(buffer_name_maps) do
+			buffer_name_map.buffer_name = buffer_name_map.path_segment[#buffer_name_map.path_segment]
+		end
+		return
+	end
 	local is_all_same_segument = false
 	local depth = 1
 	while not is_all_same_segument do
@@ -116,6 +125,38 @@ function WinbarManager:attach_buffer(bufnr)
 	winbar:add_buffer(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	self:add_to_unique_list(bufnr, bufinfo.name)
+
+	self:update()
+end
+
+---@param bufnr integer
+---@param fullpath string
+function WinbarManager:delete_from_unique_list(bufnr, fullpath)
+	local filename = vim.fn.fnamemodify(fullpath, ":t")
+	local buffer_name_maps = self.unique_buffer_names[filename]
+	if buffer_name_maps == nil then
+		return
+	end
+	self.unique_buffer_names[filename][bufnr] = nil
+	self:make_path_unique(self.unique_buffer_names[filename])
+end
+
+---detach buffer
+---@param bufnr integer
+function WinbarManager:detach_buffer(bufnr)
+	local delete_winids = {}
+	for winid, winbar in pairs(self.winbar_table) do
+		winbar:delete_buffer(bufnr)
+		if winbar:get_buffer_length() == 0 then
+			table.insert(delete_winids, winid)
+		end
+	end
+	for _, winid in pairs(delete_winids) do
+		self.winbar_table[winid] = nil
+	end
+
+	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
+	self:delete_from_unique_list(bufnr, bufinfo.name)
 
 	self:update()
 end

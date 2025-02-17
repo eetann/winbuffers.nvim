@@ -40,11 +40,11 @@ end
 
 ---@param delete_bufnr integer
 function Winbar:delete_buffer(delete_bufnr)
-	for key, bufnr in pairs(self.buffers) do
-		if bufnr == delete_bufnr then
-			self.buffers[key] = nil
-		end
-	end
+	self.buffers[tostring(delete_bufnr)] = nil
+end
+
+function Winbar:get_buffer_length()
+	return vim.fn.len(self.buffers)
 end
 
 return Winbar
