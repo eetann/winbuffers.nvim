@@ -1,21 +1,15 @@
+local utils = require("winbuffers.domain.utils")
 local Winbar = require("winbuffers.domain.winbar")
-
-local sep = vim.fn.has("win32") == 1 and "\\" or "/"
-
----@alias filename string
----@alias path_segment string[]
----@alias bufnr integer
----@alias buffer_name_map { path_segment: path_segment, buffer_name: string }
----@alias unique_buffer_names { [filename]: { [bufnr]: buffer_name_map } }
+local UniqueNameManager = require("winbuffers.domain.unique_name_manager")
 
 ---@class Winbuffers.WinbarManager
 ---@field winbar_table { [integer]: Winbuffers.Winbar }
----@field unique_buffer_names unique_buffer_names
+---@field unique_name_manager UniqueNameManager
 local WinbarManager = {}
 WinbarManager.__index = WinbarManager
 
 function WinbarManager:new()
-	return setmetatable({ winbar_table = {}, unique_buffer_names = {} }, WinbarManager)
+	return setmetatable({ winbar_table = {}, unique_name_manager = {} }, WinbarManager)
 end
 
 ---@param bufnr integer
@@ -23,7 +17,7 @@ end
 function WinbarManager:get_unique_name(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
-	local bufnr_list = self.unique_buffer_names[filename]
+	local bufnr_list = self.unique_name_manager[filename]
 	if bufnr_list[bufinfo.bufnr] == nil then
 		return ""
 	end
@@ -59,7 +53,7 @@ function WinbarManager:get_depth_path(path_segment, depth)
 	if start < 0 then
 		start = 0
 	end
-	return table.concat(vim.fn.slice(path_segment, start, length), sep)
+	return table.concat(vim.fn.slice(path_segment, start, length), utils.sep)
 end
 
 --- make paths unique
@@ -103,12 +97,12 @@ function WinbarManager:add_to_unique_list(bufnr, fullpath)
 	if buffer_name_maps == nil then
 		self.unique_buffer_names[filename] = {
 			[bufnr] = {
-				path_segment = vim.split(fullpath, sep),
+				path_segment = vim.split(fullpath, utils.sep),
 				buffer_name = filename,
 			},
 		}
 	else
-		self.unique_buffer_names[filename][bufnr] = { path_segment = vim.split(fullpath, sep), buffer_name = "" }
+		self.unique_buffer_names[filename][bufnr] = { path_segment = vim.split(fullpath, utils.sep), buffer_name = "" }
 		self:make_path_unique(self.unique_buffer_names[filename])
 	end
 end
