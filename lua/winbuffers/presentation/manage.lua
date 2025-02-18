@@ -16,7 +16,7 @@ local manager = WinbarManager:new()
 local augroup = "winbuffers"
 vim.api.nvim_create_augroup(augroup, {})
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+vim.api.nvim_create_autocmd({ "BufAdd" }, {
 	group = augroup,
 	---@param args autocmd_callback_args
 	callback = function(args)
@@ -29,6 +29,16 @@ vim.api.nvim_create_autocmd({ "BufDelete" }, {
 	---@param args autocmd_callback_args
 	callback = function(args)
 		manager:detach_buffer(args.buf)
+	end,
+})
+
+vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
+	group = augroup,
+	---@param args autocmd_callback_args
+	callback = function(args)
+		-- TODO: これだとバッファが削除されたときに困る
+		local current_winid = vim.api.nvim_get_current_win()
+		manager:update(current_winid)
 	end,
 })
 

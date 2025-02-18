@@ -24,8 +24,6 @@ T["works with split command"] = function()
 	local win2 = child.api.nvim_get_current_win()
 	expect.winbar_current_matching(child, "bar.lua!!! | ")
 	expect.winbar_matching(child, win1, "foo.lua! | ")
-	-- 2
-	child.cmd("wincmd h") -- jump left
 
 	-- | 3 |   |
 	-- |---| 1 |
@@ -39,16 +37,16 @@ end
 T["works without split command"] = function()
 	-- | 1 |
 	child.cmd("edit src/foo/bar.lua")
-	expect.winbar_current_matching(child, "bar.lua | ")
+	expect.winbar_current_matching(child, "bar.lua!!! | ")
 
 	-- | 2 | 1 |
 	-- 2
 	child.cmd("vsplit")
 	child.cmd("edit src/foo2/bar.lua")
-	expect.winbar_current_matching(child, "foo2/bar.lua | ")
+	expect.winbar_current_matching(child, "foo2/bar.lua!!! | ")
 	-- 1
 	child.cmd("wincmd l") -- jump right
-	expect.winbar_current_matching(child, "foo/bar.lua | ")
+	expect.winbar_current_matching(child, "foo/bar.lua!!! | ")
 end
 
 T["delete buffer"] = function()
@@ -59,7 +57,7 @@ T["delete buffer"] = function()
 	-- 2
 	child.cmd("vsplit src/foo2/bar.lua")
 	child.cmd("bd")
-	expect.winbar_current_matching(child, "bar.lua | ")
+	expect.winbar_current_matching(child, "bar.lua!!! | ")
 end
 
 return T

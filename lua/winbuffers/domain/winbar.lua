@@ -54,7 +54,11 @@ function Winbar:get_info()
 end
 
 function Winbar:get_current_bufnr()
-	return self:get_info().bufnr
+	local wininfo = self:get_info()
+	if wininfo then
+		return wininfo.bufnr
+	end
+	return nil
 end
 
 return Winbar

@@ -33,13 +33,18 @@ function WinbarManager:create_text(current_winid, winbar)
 		end
 		text = text .. result .. " | "
 	end
+	if text == nil then
+		return ""
+	end
 	return text
 end
 
 function WinbarManager:update(current_winid)
 	for _, winbar in pairs(self.winbar_table) do
-		local text = self:create_text(current_winid, winbar)
-		winbar:set_winbar(text)
+		if vim.api.nvim_win_is_valid(winbar.winid) then
+			local text = self:create_text(current_winid, winbar)
+			winbar:set_winbar(text)
+		end
 	end
 end
 
