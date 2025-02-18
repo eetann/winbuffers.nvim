@@ -12,23 +12,33 @@ function WinbarManager:new()
 end
 
 ---create text to display winbar
+---@param current_winid integer
 ---@param winbar Winbuffers.Winbar
-function WinbarManager:create_text(winbar)
+function WinbarManager:create_text(current_winid, winbar)
+	local is_focus = winbar.winid == current_winid
 	local text = ""
 	local sorted_bufnrs = winbar:get_sorted_bufnrs()
+	local current_bufnr = winbar:get_current_bufnr()
 	for _, key in ipairs(sorted_bufnrs) do
 		local bufinfo = vim.fn.getbufinfo(winbar.buffers[key].bufnr)[1]
 		local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
 		local unique_name = self.unique_name_manager:get_unique_name(bufinfo.bufnr, filename)
-		-- TODO: ここでハイライトなど
-		text = text .. unique_name .. " | "
+		local result = unique_name
+		if current_bufnr == bufinfo.bufnr then
+			-- TODO: winbarでフォーカスされているバッファならハイライト
+			result = result .. "!"
+		end
+		if is_focus then
+			result = result .. "!!"
+		end
+		text = text .. result .. " | "
 	end
 	return text
 end
 
-function WinbarManager:update()
+function WinbarManager:update(current_winid)
 	for _, winbar in pairs(self.winbar_table) do
-		local text = self:create_text(winbar)
+		local text = self:create_text(current_winid, winbar)
 		winbar:set_winbar(text)
 	end
 end
@@ -36,17 +46,17 @@ end
 ---attach buffer
 ---@param bufnr integer
 function WinbarManager:attach_buffer(bufnr)
-	local winid = vim.api.nvim_get_current_win()
-	local winbar = self.winbar_table[winid]
+	local current_winid = vim.api.nvim_get_current_win()
+	local winbar = self.winbar_table[current_winid]
 	if winbar == nil then
-		winbar = Winbar:new(winid)
-		self.winbar_table[winid] = winbar
+		winbar = Winbar:new(current_winid)
+		self.winbar_table[current_winid] = winbar
 	end
 	winbar:add_buffer(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	self.unique_name_manager:add_to_unique_list(bufnr, bufinfo.name)
 
-	self:update()
+	self:update(current_winid)
 end
 
 ---detach buffer
@@ -66,7 +76,8 @@ function WinbarManager:detach_buffer(bufnr)
 	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
 	self.unique_name_manager:delete_from_unique_list(bufnr, bufinfo.name)
 
-	self:update()
+	local current_winid = vim.api.nvim_get_current_win()
+	self:update(current_winid)
 end
 
 return WinbarManager

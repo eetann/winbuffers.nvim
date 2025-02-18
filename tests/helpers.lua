@@ -14,15 +14,18 @@ end, function(child, expected)
 	return string.format("received '%s' is not equal expected '%s'", child.wo.winbar, expected)
 end)
 
--- Helpers.expect.winbar_matching = MiniTest.new_expectation("current winbar matching", function(child, winid, expected)
--- 	local winbar = child.wo[winid].winbar
--- return winbar == expected
--- end, function(child, expected)
--- 	local winid = child.api.nvim_get_current_win()
--- 	local winbar = child.wo[winid].winbar
--- 	return string.format("'%s' is not equal '%s'", expected, winbar)
--- end)
---
+Helpers.expect.winbar_matching = MiniTest.new_expectation("winbar matching", function(child, winid, expected)
+	if type(child) == "string" or type(child) == "number" then
+		return false
+	end
+	return child.wo[winid].winbar == expected
+end, function(child, winid, expected)
+	if type(child) == "string" or type(child) == "number" then
+		return "Specify child as the first argument"
+	end
+	return string.format("received '%s' is not equal expected '%s'", child.wo[winid].winbar, expected)
+end)
+
 -- ---@type fun(received: any, expected: any)
 -- Helpers.expect.toContain = MiniTest.new_expectation("contain value in array", function(received, expected)
 -- 	for _, value in pairs(received) do

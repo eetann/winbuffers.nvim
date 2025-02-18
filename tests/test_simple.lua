@@ -14,16 +14,16 @@ local T = MiniTest.new_set({
 
 T["works with split command"] = function()
 	-- | 1 |
+	local win1 = child.api.nvim_get_current_win()
 	child.cmd("edit src/foo.lua")
-	expect.winbar_current_matching(child, "foo.lua | ")
+	expect.winbar_current_matching(child, "foo.lua!!! | ")
 
 	-- | 2 | 1 |
 	-- 2
 	child.cmd("vsplit src/bar.lua")
-	expect.winbar_current_matching(child, "bar.lua | ")
-	-- 1
-	child.cmd("wincmd l") -- jump right
-	expect.winbar_current_matching(child, "foo.lua | ")
+	local win2 = child.api.nvim_get_current_win()
+	expect.winbar_current_matching(child, "bar.lua!!! | ")
+	expect.winbar_matching(child, win1, "foo.lua! | ")
 	-- 2
 	child.cmd("wincmd h") -- jump left
 
@@ -33,8 +33,7 @@ T["works with split command"] = function()
 	-- 3
 	child.cmd("split foo/buz/buz.lua")
 	expect.winbar_current_matching(child, "buz.lua | ")
-	child.cmd("wincmd j") -- 2
-	expect.winbar_current_matching(child, "bar.lua | ")
+	expect.winbar_matching(child, win2, "bar.lua! | ")
 end
 
 T["works without split command"] = function()

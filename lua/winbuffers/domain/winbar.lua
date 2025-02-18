@@ -47,4 +47,14 @@ function Winbar:get_buffer_length()
 	return vim.fn.len(self.buffers)
 end
 
+---return getwininfo
+---@return vim.fn.getwininfo.ret.item
+function Winbar:get_info()
+	return vim.fn.getwininfo(self.winid)[1]
+end
+
+function Winbar:get_current_bufnr()
+	return self:get_info().bufnr
+end
+
 return Winbar
