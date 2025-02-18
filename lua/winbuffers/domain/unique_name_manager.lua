@@ -92,15 +92,14 @@ function UniqueNameManager:delete_from_unique_list(bufnr, fullpath)
 end
 
 ---@param bufnr integer
+---@param filename string
 ---@return string
-function UniqueNameManager:get_unique_name(bufnr)
-	local bufinfo = vim.fn.getbufinfo(bufnr)[1]
-	local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
+function UniqueNameManager:get_unique_name(bufnr, filename)
 	local records = self.records_dict[filename]
-	if records[bufinfo.bufnr] == nil then
+	if records[bufnr] == nil then
 		return ""
 	end
-	return records[bufinfo.bufnr].display_name
+	return records[bufnr].display_name
 end
 
 return UniqueNameManager

@@ -17,8 +17,11 @@ function WinbarManager:create_text(winbar)
 	local text = ""
 	local sorted_bufnrs = winbar:get_sorted_bufnrs()
 	for _, key in ipairs(sorted_bufnrs) do
-		local result = self.unique_name_manager:get_unique_name(winbar.buffers[key].bufnr)
-		text = text .. result .. " | "
+		local bufinfo = vim.fn.getbufinfo(winbar.buffers[key].bufnr)[1]
+		local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
+		local unique_name = self.unique_name_manager:get_unique_name(bufinfo.bufnr, filename)
+		-- TODO: ここでハイライトなど
+		text = text .. unique_name .. " | "
 	end
 	return text
 end
