@@ -18,7 +18,7 @@ WinBuffers.config = {
 ---
 WinBuffers.setup = function(args)
 	WinBuffers.config = vim.tbl_deep_extend("force", WinBuffers.config, args or {})
-	require("winbuffers.presentation.manage")
+	require("winbuffers.presentation.autocmd")
 	require("winbuffers.presentation.command")
 end
 
