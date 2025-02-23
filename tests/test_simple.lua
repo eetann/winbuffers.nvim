@@ -30,7 +30,7 @@ T["works with split command"] = function()
 	-- | 2 |   |
 	-- 3
 	child.cmd("split foo/buz/buz.lua")
-	expect.winbar_current_matching(child, "buz.lua | ")
+	expect.winbar_current_matching(child, "buz.lua!!! | ")
 	expect.winbar_matching(child, win2, "bar.lua! | ")
 end
 

@@ -14,6 +14,7 @@ end
 ---create text to display winbar
 ---@param current_winid integer
 ---@param winbar Winbuffers.Winbar
+---@return string
 function WinbarManager:create_text(current_winid, winbar)
 	local is_focus = winbar.winid == current_winid
 	local text = ""

@@ -34,9 +34,7 @@ vim.api.nvim_create_autocmd({ "BufDelete" }, {
 
 vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
 	group = augroup,
-	---@param args autocmd_callback_args
-	callback = function(args)
-		-- TODO: これだとバッファが削除されたときに困る
+	callback = function()
 		local current_winid = vim.api.nvim_get_current_win()
 		manager:update(current_winid)
 	end,

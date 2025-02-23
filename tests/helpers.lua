@@ -2,6 +2,11 @@ local Helpers = {}
 
 Helpers.expect = vim.deepcopy(MiniTest.expect)
 
+Helpers.get_winbar = function(child, winid)
+	-- Because it cannot be get correctly by `child.wo[winid].winbar`
+	return child.api.nvim_get_option_value("winbar", { win = winid })
+end
+
 Helpers.expect.winbar_current_matching = MiniTest.new_expectation("current winbar matching", function(child, expected)
 	if type(child) == "string" then
 		return false
@@ -18,12 +23,12 @@ Helpers.expect.winbar_matching = MiniTest.new_expectation("winbar matching", fun
 	if type(child) == "string" or type(child) == "number" then
 		return false
 	end
-	return child.wo[winid].winbar == expected
+	return Helpers.get_winbar(child, winid) == expected
 end, function(child, winid, expected)
 	if type(child) == "string" or type(child) == "number" then
 		return "Specify child as the first argument"
 	end
-	return string.format("received '%s' is not equal expected '%s'", child.wo[winid].winbar, expected)
+	return string.format("received '%s' is not equal expected '%s'", Helpers.get_winbar(child, winid), expected)
 end)
 
 -- ---@type fun(received: any, expected: any)
