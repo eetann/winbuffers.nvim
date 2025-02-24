@@ -16,23 +16,26 @@ end
 ---@param winbar Winbuffers.Winbar
 ---@return string
 function WinbarManager:create_text(current_winid, winbar)
-	local is_focus = winbar.winid == current_winid
+	local is_focus_window = winbar.winid == current_winid
 	local text = ""
 	local sorted_bufnrs = winbar:get_sorted_bufnrs()
 	local current_bufnr = winbar:get_current_bufnr()
 	for _, key in ipairs(sorted_bufnrs) do
 		local bufinfo = vim.fn.getbufinfo(winbar.buffers[key].bufnr)[1]
+		local is_current_buffer = current_bufnr == bufinfo.bufnr
 		local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
 		local unique_name = self.unique_name_manager:get_unique_name(bufinfo.bufnr, filename)
-		local result = unique_name
-		if current_bufnr == bufinfo.bufnr then
-			-- TODO: winbarでフォーカスされているバッファならハイライト
-			result = result .. "!"
+		local highlight = ""
+		if is_current_buffer then
+			if is_focus_window then
+				highlight = "%#WinBuffersFocusWindowTab#"
+			else
+				highlight = "%#WinBuffersFocusCurrentBufferTab#"
+			end
+		else
+			highlight = "%#WinBuffersUnCurrentBufferTab#"
 		end
-		if is_focus then
-			result = result .. "!!"
-		end
-		text = text .. result .. " | "
+		text = text .. highlight .. unique_name .. "%#Normal# "
 	end
 	if text == nil then
 		return ""
