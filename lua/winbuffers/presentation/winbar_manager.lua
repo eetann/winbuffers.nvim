@@ -1,5 +1,6 @@
 local Winbar = require("winbuffers.domain.winbar")
 local UniqueNameManager = require("winbuffers.domain.unique_name_manager")
+local CreateTabText = require("winbuffers.usecase.create-tab-text")
 
 ---@class Winbuffers.WinbarManager
 ---@field winbar_table { [integer]: Winbuffers.Winbar }
@@ -29,20 +30,13 @@ function WinbarManager:create_text(current_winid, winbar)
     local filename = vim.fn.fnamemodify(bufinfo.name, ":t")
     local unique_name =
       self.unique_name_manager:get_unique_name(bufinfo.bufnr, filename)
-    local highlight = ""
-    if is_current_buffer then
-      if is_focus_window then
-        highlight = "%#WinBuffersFocusWindowTab#"
-      else
-        highlight = "%#WinBuffersFocusCurrentBufferTab#"
-      end
-    else
-      highlight = "%#WinBuffersUnCurrentBufferTab#"
-    end
-    text = text .. highlight .. unique_name .. "%#Normal# "
-  end
-  if text == nil then
-    return ""
+    text = text
+      .. CreateTabText:execute(
+        is_focus_window,
+        is_current_buffer,
+        unique_name,
+        bufinfo
+      )
   end
   return text
 end
