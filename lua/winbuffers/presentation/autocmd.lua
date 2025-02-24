@@ -1,4 +1,4 @@
-local WinbarManager = require("winbuffers.domain.winbar_manager")
+local WinbarManager = require("winbuffers.presentation.winbar_manager")
 
 ---@class autocmd_callback_args
 ---@field id number
