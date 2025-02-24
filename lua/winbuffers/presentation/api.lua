@@ -1,7 +1,7 @@
 local M = {}
 
 M.hello = function()
-	vim.print("hello")
+  vim.print("hello")
 end
 
 return M
