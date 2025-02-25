@@ -32,7 +32,7 @@ T["works with split command"] = function()
   expect.winbar_matching(
     child,
     win1,
-    { "%#WinBuffersFocusCurrentBufferTab#", "foo.lua", "%#Normal# " }
+    { "%#WinBuffersCurrentBufferTab#", "foo.lua", "%#Normal# " }
   )
 
   -- | 3 |   |
@@ -47,7 +47,7 @@ T["works with split command"] = function()
   expect.winbar_matching(
     child,
     win2,
-    { "%#WinBuffersFocusCurrentBufferTab#", "bar.lua", "%#Normal# " }
+    { "%#WinBuffersCurrentBufferTab#", "bar.lua", "%#Normal# " }
   )
 end
 

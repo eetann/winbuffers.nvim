@@ -19,7 +19,7 @@ function CreateTabText:execute(
     if is_focus_window then
       highlight = "%#" .. ns .. "FocusWindowTab#"
     else
-      highlight = "%#" .. ns .. "FocusCurrentBufferTab#"
+      highlight = "%#" .. ns .. "CurrentBufferTab#"
     end
   else
     highlight = "%#" .. ns .. "UnCurrentBufferTab#"
