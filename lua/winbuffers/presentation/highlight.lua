@@ -60,9 +60,9 @@ end
 
 ---@type table<string, vim.api.keyset.highlight>
 local highlight_dict = {
-  FocusWindowTab = get_adjusted_hl("Normal", nil, { bold = true }),
-  CurrentBufferTab = get_adjusted_hl("Normal", 0.8, { bold = false }),
-  UnCurrentBufferTab = get_adjusted_hl("Normal", 0.5, { bold = false }),
+  FocusWindowTab = get_adjusted_hl("StatusLine", nil, { bold = true }),
+  CurrentBufferTab = get_adjusted_hl("StatusLineNC", nil, { bold = false }),
+  UnCurrentBufferTab = get_adjusted_hl("StatusLineNC", 0.5, { bold = false }),
 }
 
 function M.set_highlights()

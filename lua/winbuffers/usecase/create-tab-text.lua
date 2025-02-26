@@ -14,6 +14,7 @@ function CreateTabText:execute(
   unique_name,
   bufinfo
 )
+  -- TODO: tableにする
   local text = ""
   if is_current_buffer then
     if is_focus_window then
