@@ -14,17 +14,17 @@ function CreateTabText:execute(
   unique_name,
   bufinfo
 )
-  local highlight = ""
+  local text = ""
   if is_current_buffer then
     if is_focus_window then
-      highlight = "%#" .. ns .. "FocusWindowTab#"
+      text = "%#" .. ns .. "FocusWindowTab#"
     else
-      highlight = "%#" .. ns .. "CurrentBufferTab#"
+      text = "%#" .. ns .. "CurrentBufferTab#"
     end
   else
-    highlight = "%#" .. ns .. "UnCurrentBufferTab#"
+    text = "%#" .. ns .. "UnCurrentBufferTab#"
   end
-  return highlight .. unique_name .. "%#Normal# "
+  return text .. " " .. unique_name .. " %#Normal#"
 end
 
 return CreateTabText

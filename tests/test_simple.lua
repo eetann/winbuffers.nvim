@@ -18,7 +18,7 @@ T["works with split command"] = function()
   child.cmd("edit src/foo.lua")
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab#", "foo.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "foo.lua", " %#Normal#" }
   )
 
   -- | 2 | 1 |
@@ -27,12 +27,12 @@ T["works with split command"] = function()
   local win2 = child.api.nvim_get_current_win()
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab#", "bar.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "bar.lua", " %#Normal#" }
   )
   expect.winbar_matching(
     child,
     win1,
-    { "%#WinBuffersCurrentBufferTab#", "foo.lua", "%#Normal# " }
+    { "%#WinBuffersCurrentBufferTab# ", "foo.lua", " %#Normal#" }
   )
 
   -- | 3 |   |
@@ -42,12 +42,12 @@ T["works with split command"] = function()
   child.cmd("split foo/buz/buz.lua")
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab#", "buz.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "buz.lua", " %#Normal#" }
   )
   expect.winbar_matching(
     child,
     win2,
-    { "%#WinBuffersCurrentBufferTab#", "bar.lua", "%#Normal# " }
+    { "%#WinBuffersCurrentBufferTab# ", "bar.lua", " %#Normal#" }
   )
 end
 
@@ -56,7 +56,7 @@ T["works without split command"] = function()
   child.cmd("edit src/foo/bar.lua")
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab", "#bar.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "bar.lua", " %#Normal#" }
   )
 
   -- | 2 | 1 |
@@ -65,13 +65,13 @@ T["works without split command"] = function()
   child.cmd("edit src/foo2/bar.lua")
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab#", "foo2/bar.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "foo2/bar.lua", " %#Normal#" }
   )
   -- 1
   child.cmd("wincmd l") -- jump right
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab#", "foo/bar.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "foo/bar.lua", " %#Normal#" }
   )
 end
 
@@ -85,7 +85,7 @@ T["delete buffer"] = function()
   child.cmd("bd")
   expect.winbar_current_matching(
     child,
-    { "%#WinBuffersFocusWindowTab#", "bar.lua", "%#Normal# " }
+    { "%#WinBuffersFocusWindowTab# ", "bar.lua", " %#Normal#" }
   )
 end
 
