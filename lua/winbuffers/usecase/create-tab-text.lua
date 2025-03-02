@@ -14,16 +14,28 @@ function CreateTabText:execute(
   unique_name,
   bufinfo
 )
-  -- TODO: tableにする
   local text = ""
+
+  -- TODO: 背景色・前景色を反映する
+  -- local ok, devicons = pcall(require, "nvim-web-devicons")
+  -- if ok then
+  --   local icon, color =
+  --     devicons.get_icon(vim.fn.fnamemodify(unique_name, ":t"), nil, {
+  --       default = true,
+  --     })
+  --   if icon ~= nil and color ~= nil then
+  --     text = " " .. icon .. " "
+  --   end
+  -- end
+
   if is_current_buffer then
     if is_focus_window then
-      text = "%#" .. ns .. "FocusWindowTab#"
+      text = text .. "%#" .. ns .. "FocusWindowTab#"
     else
-      text = "%#" .. ns .. "CurrentBufferTab#"
+      text = text .. "%#" .. ns .. "CurrentBufferTab#"
     end
   else
-    text = "%#" .. ns .. "UnCurrentBufferTab#"
+    text = text .. "%#" .. ns .. "UnCurrentBufferTab#"
   end
   return text .. " " .. unique_name .. " %#Normal#"
 end
